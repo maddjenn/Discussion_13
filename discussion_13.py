@@ -15,10 +15,17 @@ def setUpDatabase(db_name):
 
 # TASK 1
 # CREATE TABLE FOR EMPLOYEE INFORMATION IN DATABASE AND ADD INFORMATION
-def create_employee_table(cur, conn):
-    pass
-
-# ADD EMPLOYEE'S INFORMTION TO THE TABLE
+    with open(file_path, 'r') as f:
+        employee_data = json.load(f)
+    cur, conn = setUpDatabase(db_name)
+    for employee in employee_data:
+        cur.execute('INSERT INTO employees VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (employee['id'], employee['first_name'], employee['last_name'], employee['email'],
+                     employee['gender'], employee['ip_address'], employee['city'], employee['state'],
+                     employee['ssn'], employee['phone_number'], employee['country'], employee['job_title']))
+    conn.commit()
+    cur.close()
+    conn.close()
 
 def add_employee(filename, cur, conn):
     #load .json file and read job data
@@ -31,7 +38,13 @@ def add_employee(filename, cur, conn):
 
 # TASK 2: GET JOB AND HIRE_DATE INFORMATION
 def job_and_hire_date(cur, conn):
-    pass
+    query = 'SELECT job_title, hire_date FROM employees'
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    conn.close()
+    return results
+
 
 # TASK 3: IDENTIFY PROBLEMATIC SALARY DATA
 # Apply JOIN clause to match individual employees
