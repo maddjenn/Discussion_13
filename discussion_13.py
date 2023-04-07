@@ -60,7 +60,22 @@ def problematic_salary(cur, conn):
 
 # TASK 4: VISUALIZATION
 def visualization_salary_data(cur, conn):
-    pass
+    query = '''SELECT salaries.salary, employees.birth_date
+               FROM employees
+               JOIN salaries ON employees.id = salaries.employee_id'''
+    cur.execute(query)
+    results = cur.fetchall()
+    cur.close()
+    conn.close()
+    salaries = [row[0] for row in results]
+    birth_dates = [datetime.datetime.strptime(row[1], '%Y-%m-%d').date().year for row in results]
+    current_year = datetime.datetime.now().date().year
+    ages = [current_year - birth_year for birth_year in birth_dates]
+    plt.hist2d(ages, salaries, bins=[20, 20], cmap=plt.cm.jet)
+    plt.xlabel('Age')
+    plt.ylabel('Salary')
+    plt.title('Distribution of Salaries by Age')
+    plt.show()
 
 class TestDiscussion12(unittest.TestCase):
     def setUp(self) -> None:
